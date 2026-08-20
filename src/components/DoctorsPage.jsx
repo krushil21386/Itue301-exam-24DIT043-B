@@ -1,14 +1,36 @@
-import React, { useState } from 'react';
-import { useAppState } from '../AppContext';
+import React, { useState, useEffect } from 'react';
 
 const DoctorsPage = () => {
-  const { doctors, handleToggleAvailability, handleAddDoctor } = useAppState();
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [apiError, setApiError] = useState(null);
+
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [specialisation, setSpecialisation] = useState('');
   const [available, setAvailable] = useState(true);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+
+  useEffect(() => {
+    const fetchDoctors = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch('http://localhost:5000/api/v1/doctors');
+        if (!response.ok) {
+          throw new Error('Failed to fetch doctor data');
+        }
+        const result = await response.json();
+        setData(result);
+        setApiError(null);
+      } catch (err) {
+        setApiError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchDoctors();
+  }, []);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -19,13 +41,14 @@ const DoctorsPage = () => {
     }
 
     const newDoctor = {
+      id: data.length > 0 ? Math.max(...data.map(d => d.id)) + 1 : 1,
       name,
       email,
       specialisation,
       available
     };
 
-    handleAddDoctor(newDoctor);
+    setData(prev => [...prev, newDoctor]);
 
     setName('');
     setEmail('');
@@ -36,6 +59,12 @@ const DoctorsPage = () => {
     setTimeout(() => setSuccess(''), 3000);
   };
 
+  const handleToggleAvailability = (doctorId) => {
+    setData(prev => prev.map(doc => 
+      doc.id === doctorId ? { ...doc, available: !doc.available } : doc
+    ));
+  };
+
   return (
     <div className="page doctors-page">
       <h2>Doctor Management</h2>
@@ -43,34 +72,41 @@ const DoctorsPage = () => {
       <div className="doctors-content">
         <div className="doctors-list-section">
           <h3>Doctor Directory</h3>
-          <div className="doctors-cards-container">
-            {doctors.length === 0 ? (
-              <p className="no-data">No doctors registered yet.</p>
-            ) : (
-              doctors.map((doctor) => (
-                <div key={doctor.id} className="doctor-card">
-                  <div className="doctor-card-header">
-                    <h4>{doctor.name}</h4>
-                    <span className={`status-pill ${doctor.available ? 'pill-available' : 'pill-unavailable'}`}>
-                      {doctor.available ? 'Available' : 'Unavailable'}
-                    </span>
+          
+          {loading && <div className="loading-indicator">Loading doctor details...</div>}
+          
+          {apiError && <div className="error-message">Error: {apiError}</div>}
+          
+          {!loading && !apiError && (
+            <div className="doctors-cards-container">
+              {data.length === 0 ? (
+                <p className="no-data">No doctors registered yet.</p>
+              ) : (
+                data.map((doctor) => (
+                  <div key={doctor.id} className="doctor-card">
+                    <div className="doctor-card-header">
+                      <h4>{doctor.name}</h4>
+                      <span className={`status-pill ${doctor.available ? 'pill-available' : 'pill-unavailable'}`}>
+                        {doctor.available ? 'Available' : 'Unavailable'}
+                      </span>
+                    </div>
+                    <div className="doctor-card-body">
+                      <p><strong>Email:</strong> {doctor.email}</p>
+                      <p><strong>Specialisation:</strong> {doctor.specialisation}</p>
+                    </div>
+                    <div className="doctor-card-footer">
+                      <button 
+                        onClick={() => handleToggleAvailability(doctor.id)}
+                        className="student-btn btn-toggle"
+                      >
+                        Toggle Availability
+                      </button>
+                    </div>
                   </div>
-                  <div className="doctor-card-body">
-                    <p><strong>Email:</strong> {doctor.email}</p>
-                    <p><strong>Specialisation:</strong> {doctor.specialisation}</p>
-                  </div>
-                  <div className="doctor-card-footer">
-                    <button 
-                      onClick={() => handleToggleAvailability(doctor.id)}
-                      className="student-btn btn-toggle"
-                    >
-                      Toggle Availability
-                    </button>
-                  </div>
-                </div>
-              ))
-            )}
-          </div>
+                ))
+              )}
+            </div>
+          )}
         </div>
 
         <div className="add-doctor-section">
