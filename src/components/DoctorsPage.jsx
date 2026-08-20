@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
+import { useAppState } from '../AppContext';
 
-const DoctorsPage = ({ doctors, onToggleAvailability, onAddDoctor }) => {
-  // Local state for the Add Doctor form
+const DoctorsPage = () => {
+  const { doctors, handleToggleAvailability, handleAddDoctor } = useAppState();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [specialisation, setSpecialisation] = useState('');
@@ -24,9 +25,8 @@ const DoctorsPage = ({ doctors, onToggleAvailability, onAddDoctor }) => {
       available
     };
 
-    onAddDoctor(newDoctor);
+    handleAddDoctor(newDoctor);
 
-    // Reset form
     setName('');
     setEmail('');
     setSpecialisation('');
@@ -41,7 +41,6 @@ const DoctorsPage = ({ doctors, onToggleAvailability, onAddDoctor }) => {
       <h2>Doctor Management</h2>
 
       <div className="doctors-content">
-        {/* Doctors Directory List */}
         <div className="doctors-list-section">
           <h3>Doctor Directory</h3>
           <div className="doctors-cards-container">
@@ -62,7 +61,7 @@ const DoctorsPage = ({ doctors, onToggleAvailability, onAddDoctor }) => {
                   </div>
                   <div className="doctor-card-footer">
                     <button 
-                      onClick={() => onToggleAvailability(doctor.id)}
+                      onClick={() => handleToggleAvailability(doctor.id)}
                       className="student-btn btn-toggle"
                     >
                       Toggle Availability
@@ -74,7 +73,6 @@ const DoctorsPage = ({ doctors, onToggleAvailability, onAddDoctor }) => {
           </div>
         </div>
 
-        {/* Add Doctor Form (Student style) */}
         <div className="add-doctor-section">
           <h3>Register New Doctor</h3>
           <form onSubmit={handleSubmit} className="student-form">

@@ -1,28 +1,26 @@
 import React, { useState } from 'react';
 import AppointmentCard from './AppointmentCard';
+import { useAppState } from '../AppContext';
 
-const HomePage = ({ appointments, patients, doctors, onUpdateStatus }) => {
+const HomePage = () => {
+  const { appointments, patients, doctors, handleUpdateStatus } = useAppState();
   const [statusFilter, setStatusFilter] = useState('all');
 
-  // Helper to find patient name from patientId
   const getPatientName = (patientId) => {
     const patient = patients.find(p => p.id === patientId);
     return patient ? patient.name : 'Unknown Patient';
   };
 
-  // Helper to find doctor name from doctorId
   const getDoctorName = (doctorId) => {
     const doctor = doctors.find(d => d.id === doctorId);
     return doctor ? doctor.name : 'Unknown Doctor';
   };
 
-  // Filtered appointments
   const filteredAppointments = appointments.filter(app => {
     if (statusFilter === 'all') return true;
     return app.status === statusFilter;
   });
 
-  // Calculate statistics
   const totalCount = appointments.length;
   const pendingCount = appointments.filter(a => a.status === 'pending').length;
   const confirmedCount = appointments.filter(a => a.status === 'confirmed').length;
@@ -32,7 +30,6 @@ const HomePage = ({ appointments, patients, doctors, onUpdateStatus }) => {
     <div className="page home-page">
       <h2>Dashboard & Appointments</h2>
       
-      {/* Statistics Cards */}
       <div className="stats-container">
         <div className="stat-card">
           <div className="stat-value">{totalCount}</div>
@@ -52,7 +49,6 @@ const HomePage = ({ appointments, patients, doctors, onUpdateStatus }) => {
         </div>
       </div>
 
-      {/* Filter Section */}
       <div className="filter-section">
         <label htmlFor="status-filter">Filter by Status: </label>
         <select 
@@ -68,13 +64,11 @@ const HomePage = ({ appointments, patients, doctors, onUpdateStatus }) => {
         </select>
       </div>
 
-      {/* Appointment Cards Grid */}
       <div className="appointments-grid">
         {filteredAppointments.length === 0 ? (
           <p className="no-data">No appointments found matching this status.</p>
         ) : (
           filteredAppointments.map((app, index) => {
-            // Find absolute index in the original array
             const originalIndex = appointments.indexOf(app);
             return (
               <div key={index} className="card-container">
@@ -90,13 +84,13 @@ const HomePage = ({ appointments, patients, doctors, onUpdateStatus }) => {
                   {app.status === 'pending' && (
                     <>
                       <button 
-                        onClick={() => onUpdateStatus(originalIndex, 'confirmed')}
+                        onClick={() => handleUpdateStatus(originalIndex, 'confirmed')}
                         className="student-btn btn-confirm"
                       >
                         Confirm
                       </button>
                       <button 
-                        onClick={() => onUpdateStatus(originalIndex, 'cancelled')}
+                        onClick={() => handleUpdateStatus(originalIndex, 'cancelled')}
                         className="student-btn btn-cancel"
                       >
                         Cancel
@@ -105,7 +99,7 @@ const HomePage = ({ appointments, patients, doctors, onUpdateStatus }) => {
                   )}
                   {app.status === 'confirmed' && (
                     <button 
-                      onClick={() => onUpdateStatus(originalIndex, 'cancelled')}
+                      onClick={() => handleUpdateStatus(originalIndex, 'cancelled')}
                       className="student-btn btn-cancel"
                     >
                       Cancel
@@ -113,7 +107,7 @@ const HomePage = ({ appointments, patients, doctors, onUpdateStatus }) => {
                   )}
                   {app.status === 'cancelled' && (
                     <button 
-                      onClick={() => onUpdateStatus(originalIndex, 'pending')}
+                      onClick={() => handleUpdateStatus(originalIndex, 'pending')}
                       className="student-btn btn-reopen"
                     >
                       Set Pending
@@ -126,7 +120,6 @@ const HomePage = ({ appointments, patients, doctors, onUpdateStatus }) => {
         )}
       </div>
 
-      {/* Patient List (showing Patient data structure) */}
       <div className="patient-list-section">
         <h3>Registered Patients</h3>
         <div className="table-responsive">

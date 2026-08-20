@@ -1,7 +1,6 @@
 import React from 'react';
 
 const AppointmentCard = ({ patientName, doctorName, date, timeSlot, status, reason }) => {
-  // Determine CSS class based on status value (monotonic style)
   let statusClass = 'status-pending';
   if (status === 'confirmed') {
     statusClass = 'status-confirmed';
