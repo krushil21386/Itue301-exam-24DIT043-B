@@ -1,59 +1,25 @@
-:root {
-  --bg: #f3f4f6; /* light gray */
-  --card-bg: #ffffff;
-  --text: #1f2937; /* charcoal */
-  --text-muted: #4b5563; /* medium gray */
-  --border: #d1d5db; /* border gray */
-  --accent: #374151; /* dark gray */
-  --accent-hover: #111827; /* very dark gray */
-  --success-bg: #e5e7eb;
-  --success-border: #9ca3af;
-  --warning-bg: #f3f4f6;
-  --warning-border: #9ca3af;
-  --danger-bg: #f9fafb;
-  --danger-border: #d1d5db;
-  --sans: 'Courier New', Courier, monospace; /* Monospace/Courier font makes it look super student-like and code-oriented! */
-}
-
 body {
+  font-family: Arial, sans-serif;
+  background-color: #f5f5f5;
+  color: #333333;
   margin: 0;
-  padding: 0;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background-color: var(--bg);
-  color: var(--text);
-  line-height: 1.5;
-}
-
-#root {
-  max-width: 1000px;
-  margin: 0 auto;
   padding: 20px;
-}
-
-h1, h2, h3, h4 {
-  color: var(--accent);
-  margin-top: 0;
 }
 
 h1 {
   text-align: center;
-  border-bottom: 2px double var(--border);
+  color: #111;
+  margin-bottom: 20px;
+  border-bottom: 2px solid #ccc;
   padding-bottom: 10px;
-  margin-bottom: 30px;
-  letter-spacing: 0.5px;
 }
 
 h2 {
-  border-bottom: 1px solid var(--border);
+  color: #222;
+  border-bottom: 1px solid #ddd;
   padding-bottom: 5px;
-  margin-bottom: 20px;
 }
 
-a {
-  color: var(--accent);
-  text-decoration: underline;
-}
-
-a:hover {
-  color: var(--accent-hover);
+h3 {
+  color: #333;
 }
